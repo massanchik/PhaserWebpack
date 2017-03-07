@@ -19,10 +19,15 @@ export default class {
     }
     create() {
         this.add.sprite(0, 0, 'bg');
+
         this.catcher = this.add.sprite(400, 300, 'catcher');
+        this.catcher.scale.setTo(1.5);
         this.catcher.anchor.setTo(.5, 0);
+
         this.cat = this.add.sprite(0, 0, 'cat');
+        this.cat.scale.setTo(2);
         this.resetCat();
+
         this.txtScore = this.add.text(10, 10, this.score.toString(), {
             font: '20px Arial',
             fill: '#fff',
@@ -37,11 +42,11 @@ export default class {
 
         if (this.cursor.left.isDown) {
             moveX = -this.speed;
-            this.catcher.scale.x = 1;
+            this.catcher.scale.x = Math.abs(this.catcher.scale.x);
         }
         if (this.cursor.right.isDown) {
             moveX = this.speed;
-            this.catcher.scale.x = -1;
+            this.catcher.scale.x = -Math.abs(this.catcher.scale.x);
         }
         if (this.cursor.up.isDown) {
             moveY = -this.speed;
