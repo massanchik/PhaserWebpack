@@ -1,10 +1,10 @@
-export default {
+export default class {
     preload() {
         this.asset = null;
         this.ready = false;
 
         this.load.image('loading_bg', 'assets/img/loading_bg.jpg');
-    },
+    }
     create() {
         this.add.sprite(0, 0, "loading_bg");
 
@@ -14,15 +14,13 @@ export default {
         this.load.onLoadComplete.addOnce(this.onLoadComplete, this);
         this.load.setPreloadSprite(this.asset);
         this.load.start();
-    },
+    }
     update() {
         if (this.ready) {
             this.game.state.start('game');
         }
-    },
+    }
     onLoadComplete() {
-        setTimeout(() => {
-            this.ready = true;
-        }, 2000);
-    },
+        this.ready = true;
+    }
 };

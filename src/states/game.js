@@ -1,57 +1,82 @@
-export default {
+import Phaser from 'phaser';
+import _ from 'underscore';
+
+export default class {
+    constructor() {
+        this.score = 0;
+        this.speed = 5;
+        this.padding = {
+            left: 62,
+            right: 50,
+            top: 40,
+            bottom: 60,
+        };
+    }
     preload() {
         this.load.image('cat', '/assets/img/cat.png');
         this.load.image('catcher', '/assets/img/catcher.png');
         this.load.image('bg', '/assets/img/bg.png');
-    },
+    }
     create() {
-        this.method = {
-            drawScore: () => {
-                this.entity.txtScore.text = this.data.score.toString();
-            },
-            catHitHandler: () => {
-                this.data.score += 10;
-                this.method.drawScore();
-                this.method.resetCat();
-            },
-            resetCat: () => {
-                this.entity.cat.x = Math.random() * this.game.width;
-                this.entity.cat.y = Math.random() * this.game.height;
-            },
-        };
-        this.data = {
-            score: 0,
-        };
-        this.entity = {
-            bg: this.game.add.sprite(0, 0, 'bg'),
-            catcher: this.game.add.sprite(400, 300, 'catcher'),
-            cat: this.game.add.sprite(Math.random() * this.game.width, Math.random() * this.game.height, 'cat'),
-            txtScore: this.game.add.text(10, 10, this.data.score.toString(), {
-                font: '20px Arial',
-                fill: '#fff',
-            }),
-            cursor: this.game.input.keyboard.createCursorKeys(),
-        };
-        this.entity.catcher.anchor.setTo(.5, 0);
-        this.game.physics.enable(this.entity.catcher, Phaser.Physics.ARCADE);
-        this.game.physics.enable(this.entity.cat, Phaser.Physics.ARCADE);
-    },
+        this.add.sprite(0, 0, 'bg');
+        this.catcher = this.add.sprite(400, 300, 'catcher');
+        this.catcher.anchor.setTo(.5, 0);
+        this.cat = this.add.sprite(0, 0, 'cat');
+        this.resetCat();
+        this.txtScore = this.add.text(10, 10, this.score.toString(), {
+            font: '20px Arial',
+            fill: '#fff',
+        });
+        this.cursor = this.input.keyboard.createCursorKeys();
+        this.physics.enable(this.catcher, Phaser.Physics.ARCADE);
+        this.physics.enable(this.cat, Phaser.Physics.ARCADE);
+    }
     update() {
-        if (this.entity.cursor.left.isDown) {
-            this.entity.catcher.x -= 5;
-            this.entity.catcher.scale.x = 1;
+        let moveX = 0;
+        let moveY = 0;
+
+        if (this.cursor.left.isDown) {
+            moveX = -this.speed;
+            this.catcher.scale.x = 1;
         }
-        if (this.entity.cursor.right.isDown) {
-            this.entity.catcher.x += 5;
-            this.entity.catcher.scale.x = -1;
+        if (this.cursor.right.isDown) {
+            moveX = this.speed;
+            this.catcher.scale.x = -1;
         }
-        if (this.entity.cursor.up.isDown) {
-            this.entity.catcher.y -= 5;
+        if (this.cursor.up.isDown) {
+            moveY = -this.speed;
         }
-        if (this.entity.cursor.down.isDown) {
-            this.entity.catcher.y += 5;
+        if (this.cursor.down.isDown) {
+            moveY = this.speed;
+        }
+        if (moveX || moveY) {
+            this.moveCatcher(moveX, moveY);
         }
 
-        this.game.physics.arcade.overlap(this.entity.catcher, this.entity.cat, this.method.catHitHandler);
-    },
+        this.physics.arcade.overlap(this.catcher, this.cat, this.catHitHandler.bind(this));
+    }
+    drawScore() {
+        this.txtScore.text = this.score.toString();
+    }
+    catHitHandler() {
+        this.score += 1;
+        this.drawScore();
+        this.resetCat();
+    }
+    resetCat() {
+        this.cat.x = _.random(this.padding.left, this.game.width - this.padding.right - Math.abs(this.cat.width));
+        this.cat.y = _.random(this.padding.top, this.game.height - this.padding.bottom - Math.abs(this.cat.height));
+    }
+    moveCatcher(x, y) {
+        let newX = this.catcher.x + x;
+        let newY = this.catcher.y + y;
+        let width = Math.abs(this.catcher.width / 2);
+
+        if (newX < this.game.width - this.padding.right - width && newX > this.padding.left + width) {
+            this.catcher.x = newX;
+        }
+        if (newY < this.game.height - this.padding.bottom - Math.abs(this.catcher.height) && newY > this.padding.top) {
+            this.catcher.y = newY;
+        }
+    }
 };
