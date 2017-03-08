@@ -11,6 +11,7 @@ export default class {
             top: 40,
             bottom: 60,
         };
+        this.catIsMoving = false;
     }
     preload() {
         this.load.image('cat', '/assets/img/cat.png');
@@ -64,13 +65,21 @@ export default class {
         this.txtScore.text = this.score.toString();
     }
     catHitHandler() {
+        if (this.catIsMoving) return;
         this.score += 1;
         this.drawScore();
         this.resetCat();
     }
     resetCat() {
-        this.cat.x = _.random(this.padding.left, this.game.width - this.padding.right - Math.abs(this.cat.width));
-        this.cat.y = _.random(this.padding.top, this.game.height - this.padding.bottom - Math.abs(this.cat.height));
+        if (this.catIsMoving) return;
+        this.catIsMoving = true;
+        let x = _.random(this.padding.left, this.game.width - this.padding.right - Math.abs(this.cat.width));
+        let y = _.random(this.padding.top, this.game.height - this.padding.bottom - Math.abs(this.cat.height));
+        this.add.tween(this.cat).to({x, y}, 200, Phaser.Easing.Bounce.Out, true)
+            .onComplete.add(this.catTweenComplete, this);
+    }
+    catTweenComplete() {
+        this.catIsMoving = false;
     }
     moveCatcher(x, y) {
         let newX = this.catcher.x + x;
