@@ -58,7 +58,7 @@ export default class {
             this.moveCatcher(moveX, moveY);
         }
 
-        this.physics.arcade.overlap(this.catcher, this.cat, this.catHitHandler.bind(this));
+        this.physics.arcade.overlap(this.catcher, this.cat, this.catHitHandler, null, this);
     }
     drawScore() {
         this.txtScore.text = this.score.toString();
