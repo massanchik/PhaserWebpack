@@ -1,4 +1,6 @@
-export default class {
+import Phaser from 'phaser';
+
+export default class Preload extends Phaser.State {
     preload() {
         this.asset = null;
         this.ready = false;

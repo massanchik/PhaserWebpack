@@ -1,8 +1,8 @@
 import Phaser from 'phaser';
-import _ from 'underscore';
 
-export default class {
+export default class Game extends Phaser.State {
     constructor() {
+        super();
         this.score = 0;
         this.speed = 5;
         this.padding = {
@@ -73,8 +73,8 @@ export default class {
     resetCat() {
         if (this.catIsMoving) return;
         this.catIsMoving = true;
-        let x = _.random(this.padding.left, this.game.width - this.padding.right - Math.abs(this.cat.width));
-        let y = _.random(this.padding.top, this.game.height - this.padding.bottom - Math.abs(this.cat.height));
+        let x = this.rnd.integerInRange(this.padding.left, this.game.width - this.padding.right - Math.abs(this.cat.width));
+        let y = this.rnd.integerInRange(this.padding.top, this.game.height - this.padding.bottom - Math.abs(this.cat.height));
         this.add.tween(this.cat).to({x, y}, 200, Phaser.Easing.Bounce.Out, true)
             .onComplete.add(this.catTweenComplete, this);
     }
